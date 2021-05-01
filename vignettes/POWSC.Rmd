@@ -47,7 +47,7 @@ BiocManager::install("POWSC")
 ```
 
 ### Quick start on using POWSC
-We use one scRNA-seq template data about ES-MEF cell types. 
+We use one scRNA-seq template data about ES-MEF cell types (GSE29087). In this case, we adopt one cell type (*fibro*) for the two-group comparison corresponding to the 1st scenario.
 
 ```{r setup, eval=TRUE, message=FALSE, results='hide'}
 suppressMessages(library(POWSC))
@@ -68,7 +68,12 @@ Determining the sample size for adequate power to detect statistical significanc
 `POWSC` is an R package designed for power assessment and sample size estimation in scRNA-seq experiment. It contains three main functionalities: 
 (1). **Parameter Estimation**: adopted and modified from the core of [SC2P](https://github.com/haowulab/SC2P). 
 (2). **Data Simulation**: consider two cases: paired-wise comparison and multiple comparisons. 
-(3). **Power Evaluation**: provide both stratified (detailed) and marginal powers
+(3). **Power Evaluation**: provide both stratified (detailed) and marginal powers. 
+
+For the model assumption, we adopt the mixture of zero-inflated poisson (ZIP) and log-normal poisson (LNP). 
+
+The power assessor in POWSC provides a variety of power evaluations including stratified and marginal power analyses for DEs characterized by **two forms** (phase transition or magnitude tuning), under different comparison scenarios. In addition, POWSC offers information for optimizing the tradeoffs between sample size and sequencing depth with the same total reads.
+
 
 ## Use POWSC
 In the context of differential expression (DE) analysis, scientists are usually interested in two different scenarios: (1) within cell type: comparing the same cell types across biological conditions such as case vs. control, which reveals the expression change of a particular cell type under different contexts. (2) between cell types: comparing different cell types under the same condition, which identifies biomarkers to distinguish cell types. In either case, the experiment starts from a number of cells randomly picked from a tissue sample consisting of a mixture of different cell types. The only factor one can control is the total number of cells.
@@ -86,7 +91,8 @@ estPower2 = Power_Cont(de, simData = simData)
 ```
 
 ### For multiple-group comparisons
-In the second scenario, the numbers of cells for distinct cell types can be very different, so the power for DE highly depends on the mixing proportions. Here, we use 1000*57 expression matrix sampled from the patient ID AB_S7 from the GSE67835 data. The original data GSE67835 can be download here: https://www.dropbox.com/s/55zdktqfqiwfs3l/GSE67835.RData?dl=0. 
+In the second scenario, the numbers of cells for distinct cell types can be very different, so the power for DE highly depends on the mixing proportions. Here, we use 1000*57 expression matrix sampled from the patient ID AB_S7 from the GSE67835 data. The original data GSE67835 can be download here: https://www.dropbox.com/s/55zdktqfqiwfs3l/GSE67835.RData?dl=0. In this case, we utilize the most abundant three cell types including oligodendrocytes, hybrid, and neurons. The underlying cell type proportion is 20%, 30%, 50% respectively. We simulate a series of datasets corresponding to different sample sizes. For each dataset, we then perform pairwise comparison and report the power evaluation for each comparison 
+
 ```{r multiple-group, eval = TRUE, message=FALSE, results='hide'}
 data("GSE67835_AB_S7_sce")
 sim_size = 200 # use a large sample is preferrable
