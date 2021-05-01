@@ -1,23 +1,19 @@
-#### RUN DE METHODS #####
-#@param rawEset much has a pData variable called celltype indicator
 
-# Set up global variables
-model = ~ cellTypes + cngeneson # in MAST
-termTotest = "cellTypes" # in SC2P
+model <- ~ cellTypes + cngeneson # in MAST
+termTotest <- "cellTypes" # in SC2P
 
 
-toEset = function(sce){
-    y = assays(sce)$counts
-    cellTypes = colData(sce)$cellTypes
-    phenoData = new("AnnotatedDataFrame", data = data.frame(cellTypes = cellTypes))
-    rownames(phenoData) = colnames(y)
-    eset = ExpressionSet(assayData = y, phenoData = phenoData)
+toEset <- function(sce){
+    y <- assays(sce)$counts
+    cellTypes <- colData(sce)$cellTypes
+    phenoData <- new("AnnotatedDataFrame", data = data.frame(cellTypes = cellTypes))
+    rownames(phenoData) <- colnames(y)
+    eset <- ExpressionSet(assayData = y, phenoData = phenoData)
     return(eset)
 }
 
 
-##### This is the function from the https://github.com/haowulab/SC2P/blob/master/R/twoPhaseDE.R.
-##### Since it is from github not CRAN or Bioconductor, I modify for POWSC usage on Bioconductor.
+
 twoPhaseDE <- function(norm,
                        design, ## vector of covariate names
                        test.which, ## which of design to be tested?
@@ -26,11 +22,11 @@ twoPhaseDE <- function(norm,
     Z <- norm$Z
     Offset <- norm$Offset
 
-    k = colSums(Y)
-    k = log2(k/median(k))
-    Offset = matrix(rep(k, nrow(Y)), nrow=nrow(Y), byrow=TRUE)
+    k <- colSums(Y)
+    k <- log2(k/median(k))
+    Offset <- matrix(rep(k, nrow(Y)), nrow=nrow(Y), byrow=TRUE)
 
-    X = norm$phenoData@data[, design, drop=FALSE] ## or X can be permuted
+    X <- norm$phenoData@data[, design, drop=FALSE] ## or X can be permuted
     twoPhaseDE0(Y=Y, Z=Z, X=X, Offset=Offset,
                 test.which=test.which, low.prob=low.prob)
 }
@@ -42,18 +38,18 @@ twoPhaseDE <- function(norm,
 #'
 #' @param sce is a simulated scRNA-seq dataset with two-group conditions, e.g., treatment vs control.
 #' @return a list of three tables: the first table summaries the DE result for both forms of DE genes. cont table represents the result for continous case. disc table shows the result for discontinous case.
-runSC2P = function(sce) {
-    sce$cellTypes = factor(sce$cellTypes)
-    rawEset = toEset(sce = sce); ngene = nrow(sce)
-    norm = eset2Phase(rawEset)  ## eset if of class ExpressionSet or eSet
-    deSC2P = twoPhaseDE(norm, design = termTotest, test.which=1)
-    discPval = deSC2P$Ph1.pval; discFdr = p.adjust(discPval, method = "fdr")
-    contPval = deSC2P$Ph2.pval; contFdr = p.adjust(contPval, method = "fdr")
-    disLen = length(discPval)
-    conLen = length(contPval)
-    disc = data.frame(geneIndex = seq_len(disLen), pval = discPval, fdr = discFdr)
-    cont = data.frame(geneIndex = seq_len(conLen), pval = contPval, fdr = contFdr)
-    rownames(disc) = rownames(cont) = rownames(deSC2P)
+runSC2P <- function(sce) {
+    sce$cellTypes <- factor(sce$cellTypes)
+    rawEset <- toEset(sce = sce); ngene = nrow(sce)
+    norm <- eset2Phase(rawEset)  ## eset if of class ExpressionSet or eSet
+    deSC2P <- twoPhaseDE(norm, design = termTotest, test.which=1)
+    discPval <- deSC2P$Ph1.pval; discFdr = p.adjust(discPval, method = "fdr")
+    contPval <- deSC2P$Ph2.pval; contFdr = p.adjust(contPval, method = "fdr")
+    disLen <- length(discPval)
+    conLen <- length(contPval)
+    disc <- data.frame(geneIndex = seq_len(disLen), pval = discPval, fdr = discFdr)
+    cont <- data.frame(geneIndex = seq_len(conLen), pval = contPval, fdr = contFdr)
+    rownames(disc) <- rownames(cont) = rownames(deSC2P)
     return(list(table = deSC2P, cont = cont, disc = disc))
 }
 
@@ -62,28 +58,28 @@ runSC2P = function(sce) {
 #'
 #' @param sce is a simulated scRNA-seq dataset with two-group conditions, e.g., treatment vs control.
 #' @return a list of three tables: the first table summaries the DE result for both forms of DE genes. cont table represents the result for continous case. disc table shows the result for discontinous case.
-runMAST = function(sce) {
+runMAST <- function(sce) {
     ## grab raw counts and compute log TPM
-    rawEset = toEset(sce = sce)
-    Y = exprs(rawEset)
-    sf = colSums(Y)/1e6
-    ltpm = log2(sweep(Y, 2, sf, FUN="/")+1)
-    sca = FromMatrix(ltpm, pData(rawEset), fData(rawEset)) # the object is sca for MAST
+    rawEset <- toEset(sce = sce)
+    Y <- exprs(rawEset)
+    sf <- colSums(Y)/1e6
+    ltpm <- log2(sweep(Y, 2, sf, FUN="/")+1)
+    sca <- FromMatrix(ltpm, pData(rawEset), fData(rawEset)) # the object is sca for MAST
     ## Start testing
-    cdr2 = colSums(assay(sca)>0)
+    cdr2 <- colSums(assay(sca)>0)
     colData(sca)$cngeneson = scale(cdr2)
-    thres = thresholdSCRNACountMatrix(assay(sca)) #, nbins=200, min_per_bin=30)
-    assays(sca) = list(thresh=thres$counts_threshold, tpm=assay(sca))
-    fit = zlm(model, sca)
-    rslt = lrTest(fit, termTotest)  # fiting zlm model
-    table = rslt[,,3]
-    two.des = list()
+    thres <- thresholdSCRNACountMatrix(assay(sca)) #, nbins=200, min_per_bin=30)
+    assays(sca) <- list(thresh=thres$counts_threshold, tpm=assay(sca))
+    fit <- zlm(model, sca)
+    rslt <- lrTest(fit, termTotest)  # fiting zlm model
+    table <- rslt[,,3]
+    two.des <- list()
     for (i in seq_len(2)){
-        pval = table[, i]
-        fdr = p.adjust(pval, method = "fdr")
-        result = data.frame(geneIndex=seq_len(length(pval)), pval=pval, fdr=fdr)
-        res = result[complete.cases(result),]
-        two.des[[i]] = res
+        pval <- table[, i]
+        fdr <- p.adjust(pval, method = "fdr")
+        result <- data.frame(geneIndex=seq_len(length(pval)), pval=pval, fdr=fdr)
+        res <- result[complete.cases(result),]
+        two.des[[i]] <- res
     }
     return(list(table = table, cont = two.des[[1]], disc = two.des[[2]]))
 }
@@ -105,12 +101,12 @@ runMAST = function(sce) {
 #' sim_sce = simData$sce
 #' DErslt = runDE(sim_sce)
 #' @export runDE
-runDE = function(sce, DE_Method = c("MAST", "SC2P")){
-    DE_Method = match.arg(DE_Method)
+runDE <- function(sce, DE_Method = c("MAST", "SC2P")){
+    DE_Method <- match.arg(DE_Method)
     if (DE_Method == "MAST"){
-        DE_rslt = runMAST(sce)
+        DE_rslt <- runMAST(sce)
     }else{
-        DE_rslt = runSC2P(sce)
+        DE_rslt <- runSC2P(sce)
     }
     return(DE_rslt)
 }
