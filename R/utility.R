@@ -193,7 +193,6 @@ eset2Phase <- function(eset, low.prob=0.99){  ## takes eSet as input
 
 
 
-##################################################
 twoPhaseDE0 <- function(Y, Z, X, Offset, test.which,
                         low.prob=.99){
     vars <- colnames(X);  vars0 <- vars[-test.which]
