@@ -69,9 +69,10 @@ PowerEst <- function(fdr, alpha, Zg, Zg2, xgr){
 #' simData = Simulate2SCE(n=500, estParas1 = estParas, estParas2 = estParas)
 #' DErslt = runDE(simData$sce)
 #' Cont_pow = Power_Cont(DErslt, simData)
+#' @import SummarizedExperiment
 #' @export Power_Cont
-## Continous case corresponding to the Phase II DE, delta means lfc
 Power_Cont <- function(DErslt, simData, alpha = 0.1, delta = 0.5, strata = c(0,10,2^(seq_len(4))*10,Inf)){
+    ## Continous case corresponding to the Phase II DE, delta means lfc
     fdrvec <- DErslt$cont$fdr
     lfc <- simData$lfc
     ngenes <- nrow(simData$sce)
@@ -123,9 +124,10 @@ Power_Cont <- function(DErslt, simData, alpha = 0.1, delta = 0.5, strata = c(0,1
 #' simData = Simulate2SCE(n=1000, estParas1 = estParas, estParas2 = estParas)
 #' DErslt = runDE(simData$sce)
 #' Disc_pow = Power_Disc(DErslt, simData)
+#' @import SummarizedExperiment
 #' @export Power_Disc
-## Discreate case corresponding to the Phase I DE, delta means pi.df
 Power_Disc <- function(DErslt, simData, alpha = 0.1, delta = 0.1, strata = seq(0, 1, by = 0.2)){
+    ## Discreate case corresponding to the Phase I DE, delta means pi.df
     fdrvec <- DErslt$disc$fdr
     pi.df <- simData$pi.df
     ngenes <- nrow(simData$sce)

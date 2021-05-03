@@ -57,6 +57,9 @@ runSC2P <- function(sce) {
 #' These parameters include four gene-wise parameters and two cell-wise parameters.
 #'
 #' @param sce is a simulated scRNA-seq dataset with two-group conditions, e.g., treatment vs control.
+#' @import MAST
+#' @import Biobase
+#' @import SummarizedExperiment
 #' @return a list of three tables: the first table summaries the DE result for both forms of DE genes. cont table represents the result for continous case. disc table shows the result for discontinous case.
 runMAST <- function(sce) {
     ## grab raw counts and compute log TPM

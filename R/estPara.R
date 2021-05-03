@@ -12,6 +12,10 @@
 #' rix = sample(1:nrow(sce), 500)
 #' sce = sce[rix, ]
 #' estParas = Est2Phase(sce)
+#' @import Biobase
+#' @import SummarizedExperiment
+#' @import limma
+#'
 #' @export Est2Phase
 Est2Phase <- function(sce, low.prob = 0.99){
     if (is(sce, "SingleCellExperiment")){
