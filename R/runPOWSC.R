@@ -82,6 +82,7 @@ runPOWSC <- function(sim_size = c(50, 100, 200, 800, 1000), per_DE = 0.05, est_P
 #' plot_POWSC(pow_rslt, Form="II", Cell_Type = "PW") # Alternatively, we can use Form="I")
 #' @import ggplot2
 #' @import RColorBrewer
+#' @import grDevices
 #' @import pheatmap
 #' @import RColorBrewer
 #' @export

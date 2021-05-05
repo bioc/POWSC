@@ -63,6 +63,7 @@ GenerateCountMatrix <- function(pi.g, p0, lambda, mu, sigma, sf){
 #' sce = sce[rix, ]
 #' estParas = Est2Phase(sce)
 #' simData = Simulate2SCE(n=100, estParas1 = estParas, estParas2 = estParas)
+#' @import SingleCellExperiment
 #' @export Simulate2SCE
 Simulate2SCE <- function(n = 100, perDE = 0.05, estParas1, estParas2) {
     # equally divide the sample size
@@ -156,6 +157,7 @@ Simulate2SCE <- function(n = 100, perDE = 0.05, estParas1, estParas2) {
 #' estParas_set = list(celltype1 = estParas1, celltype2 = estParas1, celltype3 =estParas2)
 #' multiProb = c(0.2, 0.3, 0.5)
 #' simData = SimulateMultiSCEs(n=200, estParas_set = estParas_set, multiProb = multiProb)
+#' @import SingleCellExperiment
 #' @export SimulateMultiSCEs
 SimulateMultiSCEs <- function(n = 1000, estParas_set, multiProb, delta1 = 0.1, delta2 = 0.5) {
     ## Initialize the simAll object
