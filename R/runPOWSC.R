@@ -128,9 +128,9 @@ plot_POWSC <- function(POWSCobj, Form = c("I", "II"), Cell_Type = c("PW", "Multi
             tit <- ggtitle("Form I DE genes")
             tmpxlab <- xlab("strata of zero ratios")
         }else{
-            pow <- pow2
-            tit <- ggtitle("Form II DE genes")
-            tmpxlab <- xlab("strata of average reads")
+            pow = pow2
+            tit = ggtitle("Form II DE genes")
+            tmpxlab = xlab("strata of average reads")
         }
         breaks <- round(seq(0, 1, length = 6), 1)
         ggplot(pow, aes(x=Strata, y=Power, group=Reps, color=Reps)) +
